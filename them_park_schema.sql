@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.21, for Linux (x86_64)
 --
--- Host: 127.0.0.1    Database: project
+-- Host: 127.0.0.1    Database: theme_park
 -- ------------------------------------------------------
 -- Server version	8.0.21
 
@@ -27,7 +27,6 @@ CREATE TABLE `ATTRACTION` (
   `name` varchar(30) NOT NULL,
   `for_adult` tinyint NOT NULL DEFAULT '0',
   `for_child` tinyint NOT NULL DEFAULT '0',
-  `for_old` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`attraction_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -38,8 +37,35 @@ CREATE TABLE `ATTRACTION` (
 
 LOCK TABLES `ATTRACTION` WRITE;
 /*!40000 ALTER TABLE `ATTRACTION` DISABLE KEYS */;
-INSERT INTO `ATTRACTION` VALUES (1,'one',1,1,1),(2,'two',1,0,1),(3,'three',0,1,0);
 /*!40000 ALTER TABLE `ATTRACTION` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `MAINTAINANCE_SCHEDULE`
+--
+
+DROP TABLE IF EXISTS `MAINTAINANCE_SCHEDULE`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `MAINTAINANCE_SCHEDULE` (
+  `maintainer` char(9) NOT NULL,
+  `attraction_id` int NOT NULL,
+  `start_time` datetime NOT NULL,
+  `end_time` datetime NOT NULL,
+  PRIMARY KEY (`attraction_id`,`maintainer`),
+  KEY `maintainer` (`maintainer`),
+  CONSTRAINT `MAINTAINANCE_SCHEDULE_ibfk_1` FOREIGN KEY (`attraction_id`) REFERENCES `ATTRACTION` (`attraction_id`),
+  CONSTRAINT `MAINTAINANCE_SCHEDULE_ibfk_2` FOREIGN KEY (`maintainer`) REFERENCES `STAFF` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `MAINTAINANCE_SCHEDULE`
+--
+
+LOCK TABLES `MAINTAINANCE_SCHEDULE` WRITE;
+/*!40000 ALTER TABLE `MAINTAINANCE_SCHEDULE` DISABLE KEYS */;
+/*!40000 ALTER TABLE `MAINTAINANCE_SCHEDULE` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -69,7 +95,6 @@ CREATE TABLE `PHOTO` (
 
 LOCK TABLES `PHOTO` WRITE;
 /*!40000 ALTER TABLE `PHOTO` DISABLE KEYS */;
-INSERT INTO `PHOTO` VALUES ('1',1,'2020-10-03 15:00:40',1),('1',3,'2020-10-03 15:04:41',1),('1',2,'2020-10-03 15:04:37',3);
 /*!40000 ALTER TABLE `PHOTO` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -93,7 +118,6 @@ CREATE TABLE `PHOTO_COST` (
 
 LOCK TABLES `PHOTO_COST` WRITE;
 /*!40000 ALTER TABLE `PHOTO_COST` DISABLE KEYS */;
-INSERT INTO `PHOTO_COST` VALUES (1,'200'),(2,'400'),(3,'600');
 /*!40000 ALTER TABLE `PHOTO_COST` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -112,7 +136,7 @@ CREATE TABLE `STAFF` (
   `date_of_birth` date NOT NULL,
   `join_date` date NOT NULL,
   `working_hours` varchar(50) NOT NULL DEFAULT '0',
-  `position` enum('MANAGER','OPERATOR','MAINTAINER') DEFAULT NULL,
+  `position` enum('Manager','Operator','Maintainer') NOT NULL,
   `salary` char(10) NOT NULL,
   `door_no` varchar(20) NOT NULL,
   `street` varchar(30) DEFAULT NULL,
@@ -130,7 +154,6 @@ CREATE TABLE `STAFF` (
 
 LOCK TABLES `STAFF` WRITE;
 /*!40000 ALTER TABLE `STAFF` DISABLE KEYS */;
-INSERT INTO `STAFF` VALUES ('1','harsha','pathuri','Male','2001-10-06','2020-10-03','mon-thu 9am-9pm','MANAGER','10000','77-2-7/1','gandhipuram','533103',1);
 /*!40000 ALTER TABLE `STAFF` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -170,7 +193,7 @@ CREATE TABLE `TICKET` (
   `ssn` char(9) NOT NULL,
   `ticket_type` int NOT NULL,
   `staff_id` char(9) NOT NULL,
-  `issued_time` datetime NOT NULL,
+  `issued_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ticket_id`),
   KEY `staff_id` (`staff_id`),
   KEY `ssn` (`ssn`),
@@ -187,7 +210,6 @@ CREATE TABLE `TICKET` (
 
 LOCK TABLES `TICKET` WRITE;
 /*!40000 ALTER TABLE `TICKET` DISABLE KEYS */;
-INSERT INTO `TICKET` VALUES ('1','3492',1,'1','2019-10-03 20:26:00');
 /*!40000 ALTER TABLE `TICKET` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -211,7 +233,6 @@ CREATE TABLE `TICKET_COST` (
 
 LOCK TABLES `TICKET_COST` WRITE;
 /*!40000 ALTER TABLE `TICKET_COST` DISABLE KEYS */;
-INSERT INTO `TICKET_COST` VALUES (1,'3000'),(2,'5000'),(3,'2500');
 /*!40000 ALTER TABLE `TICKET_COST` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -264,7 +285,7 @@ CREATE TABLE `VISITOR` (
 
 LOCK TABLES `VISITOR` WRITE;
 /*!40000 ALTER TABLE `VISITOR` DISABLE KEYS */;
-INSERT INTO `VISITOR` VALUES ('3492','2001-10-06','harsha','pathuri','Male');
+INSERT INTO `VISITOR` VALUES ('138479','1969-06-06','Ross','Geller','Male'),('23579','1990-05-20','Ram','Nandamuri','Male'),('237089','1970-07-07','Rachel','Green','Female'),('245432','2012-10-10','Harsh','Pathuri','Others'),('258709','1969-06-06','Chandler','Bing','Male'),('2719','2001-02-06','Alphanso','ELric','Male'),('27190','2018-09-08','Raj','Koothrapally','Male'),('28572','1970-04-22','Phoebe','Buffay','Male'),('28573','1989-11-19','Amy','Fowler','Female'),('3492','2001-10-29','Edward','Elric','Male'),('34925','2017-11-11','Ted','Mosby','Male'),('45693','1989-08-15','Arjun','Allu','Male'),('45723','1988-12-13','Sheldon','Cooper','Male'),('49582','1969-09-25','Joey','Tribbiani','Male'),('495829','1988-01-11','Bernadette','Rostenkowski','Female'),('5102','2001-08-07','lol','Pathuri','Female'),('51026','2017-12-12','Robin','Schrebatsky','Female'),('51028','1984-11-22','Scarlett','Johansson','Female'),('524235','2011-10-09','Penny','Hofstadter','Female'),('6666','2002-05-10','Harsh','Pathuri','Others'),('66660','2014-04-10','Jim','Parsons','Others'),('66666','1973-06-15','Patrick','Harris','Others'),('752284','1985-03-31','Howard','Wolowitz','Male'),('79223','1971-05-26','Monica','Geller','Female'),('98764','1990-05-25','Prasanth','Boyina','Male'),('98765','1989-02-10','Ananya','Pandey','Female'),('98767','2016-03-07','Chloe','Standall','Female'),('98768','2016-03-07','Alex','Standall','Others');
 /*!40000 ALTER TABLE `VISITOR` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -301,4 +322,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-03 20:38:39
+-- Dump completed on 2020-10-04 21:02:59
