@@ -32,15 +32,6 @@ CREATE TABLE `ATTRACTION` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ATTRACTION`
---
-
-LOCK TABLES `ATTRACTION` WRITE;
-/*!40000 ALTER TABLE `ATTRACTION` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ATTRACTION` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `MAINTAINANCE_SCHEDULE`
 --
 
@@ -58,15 +49,6 @@ CREATE TABLE `MAINTAINANCE_SCHEDULE` (
   CONSTRAINT `MAINTAINANCE_SCHEDULE_ibfk_2` FOREIGN KEY (`maintainer`) REFERENCES `STAFF` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `MAINTAINANCE_SCHEDULE`
---
-
-LOCK TABLES `MAINTAINANCE_SCHEDULE` WRITE;
-/*!40000 ALTER TABLE `MAINTAINANCE_SCHEDULE` DISABLE KEYS */;
-/*!40000 ALTER TABLE `MAINTAINANCE_SCHEDULE` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `PHOTO`
@@ -90,15 +72,6 @@ CREATE TABLE `PHOTO` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `PHOTO`
---
-
-LOCK TABLES `PHOTO` WRITE;
-/*!40000 ALTER TABLE `PHOTO` DISABLE KEYS */;
-/*!40000 ALTER TABLE `PHOTO` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `PHOTO_COST`
 --
 
@@ -111,15 +84,6 @@ CREATE TABLE `PHOTO_COST` (
   PRIMARY KEY (`photo_size`,`photo_cost`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `PHOTO_COST`
---
-
-LOCK TABLES `PHOTO_COST` WRITE;
-/*!40000 ALTER TABLE `PHOTO_COST` DISABLE KEYS */;
-/*!40000 ALTER TABLE `PHOTO_COST` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `STAFF`
@@ -149,15 +113,6 @@ CREATE TABLE `STAFF` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `STAFF`
---
-
-LOCK TABLES `STAFF` WRITE;
-/*!40000 ALTER TABLE `STAFF` DISABLE KEYS */;
-/*!40000 ALTER TABLE `STAFF` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `STAFF_PHONENUMBERS`
 --
 
@@ -171,15 +126,6 @@ CREATE TABLE `STAFF_PHONENUMBERS` (
   CONSTRAINT `STAFF_PHONENUMBERS_ibfk_1` FOREIGN KEY (`staff_id`) REFERENCES `STAFF` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `STAFF_PHONENUMBERS`
---
-
-LOCK TABLES `STAFF_PHONENUMBERS` WRITE;
-/*!40000 ALTER TABLE `STAFF_PHONENUMBERS` DISABLE KEYS */;
-/*!40000 ALTER TABLE `STAFF_PHONENUMBERS` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `TICKET`
@@ -205,15 +151,6 @@ CREATE TABLE `TICKET` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `TICKET`
---
-
-LOCK TABLES `TICKET` WRITE;
-/*!40000 ALTER TABLE `TICKET` DISABLE KEYS */;
-/*!40000 ALTER TABLE `TICKET` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `TICKET_COST`
 --
 
@@ -226,15 +163,6 @@ CREATE TABLE `TICKET_COST` (
   PRIMARY KEY (`ticket_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `TICKET_COST`
---
-
-LOCK TABLES `TICKET_COST` WRITE;
-/*!40000 ALTER TABLE `TICKET_COST` DISABLE KEYS */;
-/*!40000 ALTER TABLE `TICKET_COST` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `VISITED_ATTRACTIONS`
@@ -254,15 +182,6 @@ CREATE TABLE `VISITED_ATTRACTIONS` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `VISITED_ATTRACTIONS`
---
-
-LOCK TABLES `VISITED_ATTRACTIONS` WRITE;
-/*!40000 ALTER TABLE `VISITED_ATTRACTIONS` DISABLE KEYS */;
-/*!40000 ALTER TABLE `VISITED_ATTRACTIONS` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `VISITOR`
 --
 
@@ -280,16 +199,6 @@ CREATE TABLE `VISITOR` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `VISITOR`
---
-
-LOCK TABLES `VISITOR` WRITE;
-/*!40000 ALTER TABLE `VISITOR` DISABLE KEYS */;
-INSERT INTO `VISITOR` VALUES ('138479','1969-06-06','Ross','Geller','Male'),('23579','1990-05-20','Ram','Nandamuri','Male'),('237089','1970-07-07','Rachel','Green','Female'),('245432','2012-10-10','Harsh','Pathuri','Others'),('258709','1969-06-06','Chandler','Bing','Male'),('2719','2001-02-06','Alphanso','ELric','Male'),('27190','2018-09-08','Raj','Koothrapally','Male'),('28572','1970-04-22','Phoebe','Buffay','Male'),('28573','1989-11-19','Amy','Fowler','Female'),('3492','2001-10-29','Edward','Elric','Male'),('34925','2017-11-11','Ted','Mosby','Male'),('45693','1989-08-15','Arjun','Allu','Male'),('45723','1988-12-13','Sheldon','Cooper','Male'),('49582','1969-09-25','Joey','Tribbiani','Male'),('495829','1988-01-11','Bernadette','Rostenkowski','Female'),('5102','2001-08-07','lol','Pathuri','Female'),('51026','2017-12-12','Robin','Schrebatsky','Female'),('51028','1984-11-22','Scarlett','Johansson','Female'),('524235','2011-10-09','Penny','Hofstadter','Female'),('6666','2002-05-10','Harsh','Pathuri','Others'),('66660','2014-04-10','Jim','Parsons','Others'),('66666','1973-06-15','Patrick','Harris','Others'),('752284','1985-03-31','Howard','Wolowitz','Male'),('79223','1971-05-26','Monica','Geller','Female'),('98764','1990-05-25','Prasanth','Boyina','Male'),('98765','1989-02-10','Ananya','Pandey','Female'),('98767','2016-03-07','Chloe','Standall','Female'),('98768','2016-03-07','Alex','Standall','Others');
-/*!40000 ALTER TABLE `VISITOR` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `VISITOR_PHONENUMBERS`
 --
 
@@ -303,15 +212,6 @@ CREATE TABLE `VISITOR_PHONENUMBERS` (
   CONSTRAINT `VISITOR_PHONENUMBERS_ibfk_1` FOREIGN KEY (`visitor_ssn`) REFERENCES `VISITOR` (`ssn`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `VISITOR_PHONENUMBERS`
---
-
-LOCK TABLES `VISITOR_PHONENUMBERS` WRITE;
-/*!40000 ALTER TABLE `VISITOR_PHONENUMBERS` DISABLE KEYS */;
-/*!40000 ALTER TABLE `VISITOR_PHONENUMBERS` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -322,4 +222,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-10-04 21:02:59
+-- Dump completed on 2020-10-04 21:43:00
