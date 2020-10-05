@@ -27,21 +27,21 @@ def viewTable(rows):
 
 def view():
     print("\nChoose the data that you want to see.\n\n")
-    print("1.   VISITORS")  # selection
-    print("2.   STAFF")
-    print("3.   ATTRACTIONS")
-    print("4.   TICKETS")
-    print("5.   MAINTAINANCE SCHEDULE")
-    print("6.   TICKET TYPES AND COST")
-    print("7.   LIST ALL MANAGEMENT STAFF")  # Projection
-    print("8.   LIST ALL MAINTAINING STAFF")
-    print("9.   LIST ALL OPERATING STAFF")
-    print("10.  TOTAL PRICE FOR PHOTOS FOR A VISITOR")  # aggregation
-    print("11:  PHOTOS OF A PERSON ")
-    print("12.  NUMBER OF VISITORS PER DAY")
-    print("13.  NUMBER OF VISITORS ON WEEKEND")
-    print("14:  POPULAR ATTRACTIONS")  # analysis
-    print("15.  MOST PHOTOS TAKEN ATTRACTION")
+    print("1.   Visitors")  # selection
+    print("2.   Staff")
+    print("3.   Attractions")
+    print("4.   Tickets")
+    print("5.   Maintainance Schedule")
+    print("6.   List Management Staff")  # Projection
+    print("7.   List Maintaining Staff")
+    print("8.   List Operating Staff")
+    print("9.  Total Price for Photos of a Visitor")  # aggregation
+    print("10:  photos of a Person ")
+    print("11.  Number of Visitors Per Day")
+    print("12.  Number of Visitors on Weekend")
+    print("13:  Popular Attractions till date")  # analysis
+    print("14.  Attractions where more Photos are taken till date")
+    print("15.  Search for Employee")  # search
     # need search by text
     print("\n")
     ch = input("Enter: ")
@@ -57,26 +57,36 @@ def view():
     elif ch == '5':
         query = "SELECT * FROM MAINTAINANCE_SCHEDULE"
     elif ch == '6':
-        query = "SELECT * FROM TICKET_COST"
+        query = """SELECT fname,lname,sex FROM STAFF WHERE position="Manager";"""
     elif ch == '7':
-        query = """SELECT fname,lname,sex from STAFF where position="Manager";"""
+        query = """SELECT fname,lname,sex FROM STAFF WHERE position="Maintainer";"""
     elif ch == '8':
-        query = """SELECT fname,lname,sex from STAFF where position="Maintainer";"""
+        query = """SELECT fname,lname,sex FROM STAFF WHERE position="Operator";"""
     elif ch == '9':
-        query = """SELECT fname,lname,sex from STAFF where position="Operator";"""
+        ticketid = int(input("TICKET ID: "))
+        query = "SELECT SUM(photo_cost) AS TOTAL_COST FROM ((SELECT photo_size FROM PHOTO WHERE ticket_id=%d) AS P INNER JOIN PHOTO_COST AS C ON P.photo_size=C.photo_size)" % (ticketid)
     elif ch == '10':
         ticketid = int(input("TICKET ID: "))
-        query = "SELECT SUM(photo_cost) as TOTAL_COST FROM ((SELECT photo_size FROM PHOTO WHERE ticket_id=%d) as P INNER JOIN PHOTO_COST as C ON P.photo_size=C.photo_size)" % (ticketid)
-    elif ch == '11':
-        ticketid = int(input("TICKET ID: "))
-        query = "select photo_time AS TIME ,attraction_id AS LOCATION,photo_cost AS COST from ((select photo_time,photo_size,attraction_id from PHOTO where ticket_id=%d) as P INNER JOIN PHOTO_COST as C ON P.photo_size=C.photo_size)" % (
+        query = "SELECT photo_time AS TIME ,attraction_id AS LOCATION,photo_cost AS COST FROM ((SELECT photo_time,photo_size,attraction_id FROM PHOTO WHERE ticket_id=%d) as P INNER JOIN PHOTO_COST as C ON P.photo_size=C.photo_size)" % (
             ticketid)
+    elif ch == '11':
+        query = "SELECT COUNT(*) AS NUMBER_OF_VISITORS,DATE(issued_time) AS DATE FROM TICKET GROUP BY DATE(issued_time)"
     elif ch == '12':
-        query = "SELECT COUNT(*) as NUMBER_OF_VISITORS,DATE(issued_time) as DATE FROM TICKET GROUP BY DATE(issued_time)"
+        query = "SELECT COUNT(*) AS NUMBER_OF_VISITORS,WEEKDAY(issued_time) AS DAY FROM TICKET WHERE WEEKDAY(issued_time)=5 OR WEEKDAY(issued_time)=6 GROUP BY WEEKDAY(issued_time)"
     elif ch == '13':
-        query = "SELECT COUNT(*) as NUMBER_OF_VISITORS,WEEKDAY(issued_time) as DAY FROM TICKET WHERE WEEKDAY(issued_time)=5 OR WEEKDAY(issued_time)=6 GROUP BY WEEKDAY(issued_time)"
-    elif ch == '14':
-        query = "select D.attraction_id as ATTRACTION from (select COUNT(*) as count,attraction_id from VISITED_ATTRACTIONS group by attraction_id) as D inner join (select AVG(count) as avg from (select COUNT(*) as count from VISITED_ATTRACTIONS group by attraction_id) as A ) as B ON D.count > B.avg"
+        query = "SELECT E.id,S.name FROM (SELECT D.attraction_id AS id FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) AS D INNER JOIN (select AVG(count) AS avg FROM (SELECT COUNT(*) AS count FROM VISITED_ATTRACTIONS GROUP BY attraction_id) AS A ) AS B ON D.count > B.avg ) as E INNER JOIN ATTRACTION S ON E.id=S.attraction_id"
+    # elif ch == '14':
+        # mysql> SELECT MAX(A.count) FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) as A;
+    elif ch == '15':
+        if input("Search in fname else in lname (y/n): ") == 'y':
+            inp = input("Enter String to search in Staff fname: ")
+            query = "SELECT fname,lname FROM STAFF WHERE fname REGEXP '%s' " % (
+                inp)
+        else:
+            inp = input("Enter String to search in Staff lname: ")
+            query = "SELECT fname,lname FROM STAFF WHERE lname REGEXP '%s' " % (
+                inp)
+
     else:
         print("You have entered an invalid option.")
         return
@@ -466,7 +476,7 @@ while(1):
                 tmp = sp.call('clear', shell=True)
                 # refreshDatabase()
                 print("1.   View Options")
-                print("2.   Addition Options")
+                print("2.   Insert Options")
                 print("3.   Update Options")
                 print("4.   Delete Options")
                 print("5.   Enter Own Commad")
