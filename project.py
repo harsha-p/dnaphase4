@@ -78,15 +78,9 @@ def view():
     # elif ch == '14':
         # mysql> SELECT MAX(A.count) FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) as A;
     elif ch == '15':
-        if input("Search in fname else in lname (y/n): ") == 'y':
-            inp = input("Enter String to search in Staff fname: ")
-            query = "SELECT fname,lname FROM STAFF WHERE fname REGEXP '%s' " % (
-                inp)
-        else:
-            inp = input("Enter String to search in Staff lname: ")
-            query = "SELECT fname,lname FROM STAFF WHERE lname REGEXP '%s' " % (
-                inp)
-
+        inp = input("Enter String to search: ")
+        query = "SELECT fname,lname FROM STAFF WHERE fname REGEXP '%s' OR lname REGEXP '%s' " % (
+            inp, inp)
     else:
         print("You have entered an invalid option.")
         return
@@ -459,7 +453,8 @@ while(1):
         con = pymysql.connect(host='127.0.0.1',
                               user=username,
                               password=password,
-                              db='project',
+                              db='theme_park',
+                              # db='project',
                               cursorclass=pymysql.cursors.DictCursor,
                               port=5005)
         tmp = sp.call('clear', shell=True)
