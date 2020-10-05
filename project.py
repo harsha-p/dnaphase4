@@ -1,3 +1,4 @@
+from pymysql.constants import CLIENT
 import subprocess as sp
 import pymysql
 import pymysql.cursors
@@ -13,7 +14,7 @@ def viewTable(rows):
     try:
         a.append(list(rows[0].keys()))
     except:
-        print("\n-----------------\nEMPTY TABLE\n-----------------\n")
+        print("\n-------------\n| EMPTY TABLE |\n---------------\n")
         return
     for row in rows:
         b = []
@@ -31,12 +32,12 @@ def view():
     print("2.   Staff")
     print("3.   Attractions")
     print("4.   Tickets")
-    print("5.   Maintainance Schedule")
+    print("5.   Maintenance Schedule")
     print("6.   List Management Staff")  # Projection
     print("7.   List Maintaining Staff")
     print("8.   List Operating Staff")
-    print("9.  Total Price for Photos of a Visitor")  # aggregation
-    print("10:  photos of a Person ")
+    print("9.   Total Price for Photos of a Visitor")  # aggregation
+    print("10:  Photos of a Person ")
     print("11.  Number of Visitors Per Day")
     print("12.  Number of Visitors on Weekend")
     print("13:  Popular Attractions till date")  # analysis
@@ -75,7 +76,8 @@ def view():
         query = "SELECT COUNT(*) AS NUMBER_OF_VISITORS,WEEKDAY(issued_time) AS DAY FROM TICKET WHERE WEEKDAY(issued_time)=5 OR WEEKDAY(issued_time)=6 GROUP BY WEEKDAY(issued_time)"
     elif ch == '13':
         query = "SELECT E.id,S.name FROM (SELECT D.attraction_id AS id FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) AS D INNER JOIN (select AVG(count) AS avg FROM (SELECT COUNT(*) AS count FROM VISITED_ATTRACTIONS GROUP BY attraction_id) AS A ) AS B ON D.count > B.avg ) as E INNER JOIN ATTRACTION S ON E.id=S.attraction_id"
-    # elif ch == '14':
+    elif ch == '14':
+        query = "SELECT D.count as Photos count,C.name as Attraction,D.attraction_id as ID FROM (SELECT B.count,B.attraction_id FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS  GROUP BY attraction_id ) as B INNER JOIN (SELECT MAX(A.count) as photo_max FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) as A) as M  ON B.count=M.photo_max) as D INNER JOIN ATTRACTION C ON D.attraction_id=C.attraction_id"
         # mysql> SELECT MAX(A.count) FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) as A;
     elif ch == '15':
         inp = input("Enter String to search: ")
@@ -103,7 +105,7 @@ def update():
     print("2.   Visitor")
     print("3.   Photo")
     print("4.   Attraction")
-    print("5.   Maintainance Schedule")
+    print("5.   Maintenance Schedule")
     print("\n")
     ch = int(input("Enter: "))
     if ch == 1:
@@ -219,7 +221,7 @@ def insert():
     print("3.   Attraction")
     print("4.   Ticket")
     print("5.   Photo")
-    print("6.   Maintainance Schedule")
+    print("6.   Maintenance Schedule")
     print("\n")
     ch = input("Enter: ")
     if ch == '1':
@@ -231,6 +233,7 @@ def insert():
         row["ssn"] = input("SSN: ")
         row["dob"] = input("Birth Date (YYYY-MM-DD): ")
         row["sex"] = input("Sex (Male/Female|Others): ")
+        # row["phonenumber"] = input("Phone number: ")
         query = "INSERT INTO VISITOR(ssn,date_of_birth,fname,lname,sex) VALUES ('%s','%s','%s','%s','%s')" % (
             row["ssn"], row["dob"], row["fname"], row["lname"], row["sex"])
     elif ch == '2':
@@ -285,7 +288,7 @@ def insert():
                 row["ticket_id"], row["attraction_id"], row["photo_size"])
     elif ch == '6':
         row = {}
-        print("Enter Maintainance Schedule Details: ")
+        print("Enter Maintenance Schedule Details: ")
         row["id"] = input("Enter Staff ID: ")
         row["attraction_id"] = input("Enter Attraction ID: ")
         row["starttime"] = input("Enter Start time (YYYY-MM-DD HH:MM:SS): ")
@@ -431,18 +434,8 @@ def check(ch):
         print("Error: Invalid Option")
 
 
-def refreshDatabase():
-    global cur
-
-    # Deleting incorrectly entered data in insert function
-    # Have to write this function.
-    print("Hello: Refreshing database")  # Test printline.
-
-
-# Global
 while(1):
     tmp = sp.call('clear', shell=True)
-    # The two lines below should be uncommented
     # username = input("Username: ")
     # password = input("Password: ")
 
@@ -453,10 +446,12 @@ while(1):
         con = pymysql.connect(host='127.0.0.1',
                               user=username,
                               password=password,
-                              db='theme_park',
+                              db='theme_park2',
                               # db='project',
                               cursorclass=pymysql.cursors.DictCursor,
-                              port=5005)
+                              client_flag=CLIENT.MULTI_STATEMENTS,
+                              port=5005
+                              )
         tmp = sp.call('clear', shell=True)
         if(con.open):
             print("Connected")
@@ -469,12 +464,11 @@ while(1):
             exit = 0
             while(1):
                 tmp = sp.call('clear', shell=True)
-                # refreshDatabase()
                 print("1.   View Options")
                 print("2.   Insert Options")
                 print("3.   Update Options")
                 print("4.   Delete Options")
-                print("5.   Enter Own Commad")
+                print("5.   Enter Own Command")
                 print("6.   Logout")
                 ch = int(input("\nEnter: "))
                 if(ch == 6):
