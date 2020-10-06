@@ -5,10 +5,9 @@ import pymysql.cursors
 from tabulate import tabulate
 from datetime import datetime
 now = datetime.now()
-# row["age"] = now.year - dob.year - ((today.month, today.day) < (born.month, born.day))
 
 
-def viewTable(rows):
+def draw(rows):
 
     a = []
     try:
@@ -26,8 +25,8 @@ def viewTable(rows):
     return
 
 
-def view():
-    print("\nChoose the data that you want to see.\n\n")
+def fetch():
+    print("\nAvailable Options in Fetch\n")
     print("1.   Visitors")  # selection
     print("2.   Staff")
     print("3.   Attractions")
@@ -75,7 +74,7 @@ def view():
     elif ch == '12':
         query = "SELECT COUNT(*) AS NUMBER_OF_VISITORS,WEEKDAY(issued_time) AS DAY FROM TICKET WHERE WEEKDAY(issued_time)=5 OR WEEKDAY(issued_time)=6 GROUP BY WEEKDAY(issued_time)"
     elif ch == '13':
-        query = "SELECT E.id,S.name FROM (SELECT D.attraction_id AS id FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) AS D INNER JOIN (select AVG(count) AS avg FROM (SELECT COUNT(*) AS count FROM VISITED_ATTRACTIONS GROUP BY attraction_id) AS A ) AS B ON D.count > B.avg ) as E INNER JOIN ATTRACTION S ON E.id=S.attraction_id"
+        query = "SELECT E.id as ID,S.name as Name,E.count as Visitor count FROM (SELECT D.attraction_id AS id,D.count FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) AS D INNER JOIN (select AVG(count) AS avg FROM (SELECT COUNT(*) AS count FROM VISITED_ATTRACTIONS GROUP BY attraction_id) AS A ) AS B ON D.count > B.avg ) as E INNER JOIN ATTRACTION S ON E.id=S.attraction_id"
     elif ch == '14':
         query = "SELECT D.count as Photos count,C.name as Attraction,D.attraction_id as ID FROM (SELECT B.count,B.attraction_id FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS  GROUP BY attraction_id ) as B INNER JOIN (SELECT MAX(A.count) as photo_max FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) as A) as M  ON B.count=M.photo_max) as D INNER JOIN ATTRACTION C ON D.attraction_id=C.attraction_id"
     elif ch == '15':
@@ -94,12 +93,12 @@ def view():
         return
 
     rows = cur.fetchall()
-    viewTable(rows)
+    draw(rows)
     con.commit()
 
 
 def update():
-    print("\nChoose the data that you want to update.\n\n")
+    print("\nAvailable Options in Update\n")
     print("1.   Staff")
     print("2.   Visitor")
     print("3.   Photo")
@@ -215,6 +214,7 @@ def update():
 
 
 def insert():
+    print("\nAvailable Options in Insert\n")
     print("1.   Visitor")
     print("2.   Staff")
     print("3.   Attraction")
@@ -312,7 +312,7 @@ def insert():
 
 def owncommand():
 
-    query = input("Enter Command: \n")
+    query = input("Enter Command: ")
     try:
         no_of_rows = cur.execute(query)
     except Exception as e:
@@ -323,15 +323,14 @@ def owncommand():
         return
 
     rows = cur.fetchall()
-    viewTable(rows)
+    draw(rows)
     con.commit()
 
     return
 
 
 def delete():
-
-    print("\nChoose the data that you want to delete.\n\n")
+    print("\nAvailable Options in Delete\n")
     print("1.   Staff")
     print("2.   Visitor")
     print("3.   Photo")
@@ -419,7 +418,7 @@ def delete():
 
 def check(ch):
     if(ch == 1):
-        view()
+        fetch()
     elif(ch == 2):
         insert()
     elif(ch == 3):
@@ -462,7 +461,7 @@ while(1):
             exit = 0
             while(1):
                 tmp = sp.call('clear', shell=True)
-                print("1.   View Options")
+                print("1.   Fetch Options")
                 print("2.   Insert Options")
                 print("3.   Update Options")
                 print("4.   Delete Options")
