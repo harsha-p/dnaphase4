@@ -78,7 +78,6 @@ def view():
         query = "SELECT E.id,S.name FROM (SELECT D.attraction_id AS id FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) AS D INNER JOIN (select AVG(count) AS avg FROM (SELECT COUNT(*) AS count FROM VISITED_ATTRACTIONS GROUP BY attraction_id) AS A ) AS B ON D.count > B.avg ) as E INNER JOIN ATTRACTION S ON E.id=S.attraction_id"
     elif ch == '14':
         query = "SELECT D.count as Photos count,C.name as Attraction,D.attraction_id as ID FROM (SELECT B.count,B.attraction_id FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS  GROUP BY attraction_id ) as B INNER JOIN (SELECT MAX(A.count) as photo_max FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) as A) as M  ON B.count=M.photo_max) as D INNER JOIN ATTRACTION C ON D.attraction_id=C.attraction_id"
-        # mysql> SELECT MAX(A.count) FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) as A;
     elif ch == '15':
         inp = input("Enter String to search: ")
         query = "SELECT fname,lname FROM STAFF WHERE fname REGEXP '%s' OR lname REGEXP '%s' " % (
@@ -233,7 +232,6 @@ def insert():
         row["ssn"] = input("SSN: ")
         row["dob"] = input("Birth Date (YYYY-MM-DD): ")
         row["sex"] = input("Sex (Male/Female|Others): ")
-        # row["phonenumber"] = input("Phone number: ")
         query = "INSERT INTO VISITOR(ssn,date_of_birth,fname,lname,sex) VALUES ('%s','%s','%s','%s','%s')" % (
             row["ssn"], row["dob"], row["fname"], row["lname"], row["sex"])
     elif ch == '2':
