@@ -1,0 +1,4 @@
+command to generate database :
+
+    sudo mysql -h 127.0.0.1 -u root --port=5005 -p < theme_parkdb.sql
+

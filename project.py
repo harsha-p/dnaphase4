@@ -1,10 +1,8 @@
-from pymysql.constants import CLIENT
-import subprocess as sp
 import pymysql
 import pymysql.cursors
+import subprocess as sp
 from tabulate import tabulate
 from datetime import datetime
-now = datetime.now()
 
 
 def draw(rows):
@@ -74,9 +72,9 @@ def fetch():
     elif ch == '12':
         query = "SELECT COUNT(*) AS NUMBER_OF_VISITORS,WEEKDAY(issued_time) AS DAY FROM TICKET WHERE WEEKDAY(issued_time)=5 OR WEEKDAY(issued_time)=6 GROUP BY WEEKDAY(issued_time)"
     elif ch == '13':
-        query = "SELECT E.id as ID,S.name as Name,E.count as Visitor count FROM (SELECT D.attraction_id AS id,D.count FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) AS D INNER JOIN (select AVG(count) AS avg FROM (SELECT COUNT(*) AS count FROM VISITED_ATTRACTIONS GROUP BY attraction_id) AS A ) AS B ON D.count > B.avg ) as E INNER JOIN ATTRACTION S ON E.id=S.attraction_id"
+        query = "SELECT E.id as ID,S.name as Name,E.count as Visitor_count FROM (SELECT D.attraction_id AS id,D.count FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) AS D INNER JOIN (select AVG(count) AS avg FROM (SELECT COUNT(*) AS count FROM VISITED_ATTRACTIONS GROUP BY attraction_id) AS A ) AS B ON D.count > B.avg ) as E INNER JOIN ATTRACTION S ON E.id=S.attraction_id"
     elif ch == '14':
-        query = "SELECT D.count as Photos count,C.name as Attraction,D.attraction_id as ID FROM (SELECT B.count,B.attraction_id FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS  GROUP BY attraction_id ) as B INNER JOIN (SELECT MAX(A.count) as photo_max FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) as A) as M  ON B.count=M.photo_max) as D INNER JOIN ATTRACTION C ON D.attraction_id=C.attraction_id"
+        query = "SELECT D.count as Photos_count,C.name as Attraction,D.attraction_id as ID FROM (SELECT B.count,B.attraction_id FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS  GROUP BY attraction_id ) as B INNER JOIN (SELECT MAX(A.count) as photo_max FROM (SELECT COUNT(*) AS count,attraction_id FROM VISITED_ATTRACTIONS GROUP BY attraction_id) as A) as M  ON B.count=M.photo_max) as D INNER JOIN ATTRACTION C ON D.attraction_id=C.attraction_id"
     elif ch == '15':
         inp = input("Enter String to search: ")
         query = "SELECT fname,lname FROM STAFF WHERE fname REGEXP '%s' OR lname REGEXP '%s' " % (
@@ -213,6 +211,97 @@ def update():
     return
 
 
+def insertvisitor():
+    row = {}
+    row_phno = []
+    print("Enter visitor details: ")
+    name = (input("Name (Fname Lname): ")).split(' ')
+    row["fname"] = name[0]
+    row["lname"] = name[1]
+    row["ssn"] = input("SSN: ")
+    row["dob"] = input("Birth Date (YYYY-MM-DD): ")
+    row["sex"] = input("Sex (Male/Female/Others): ")
+    n = int(input("Enter the number of Phone numbers you want to insert: "))
+    for i in range(n):
+        row_phno.append(input("Enter Phone number: "))
+        print(row_phno[i], i)
+    try:
+        query = "INSERT INTO VISITOR(ssn,date_of_birth,fname,lname,sex) VALUES ('%s','%s','%s','%s','%s')" % (
+            row["ssn"], row["dob"], row["fname"], row["lname"], row["sex"])
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert into database")
+        print(">>>>>>>>>>>>>", e)
+        return
+    for i in range(n):
+        try:
+            query = "INSERT INTO VISITOR_PHONENUMBERS(visitor_ssn,phone_number) VALUES ('%s','%s')" % (
+                row["ssn"], row_phno[i]
+            )
+            cur.execute(query)
+            con.commit()
+        except Exception as e:
+            con.rollback()
+            print("Failed to insert into database")
+            print(">>>>>>>>>>>>>", e)
+            return
+    return
+
+
+def insertstaff():
+    global cur
+    row = {}
+    row_phno = []
+    print("Enter staff details: ")
+    name = (input("Name (Fname Lname): ")).split(' ')
+    row["fname"] = name[0]
+    row["lname"] = name[1]
+    row["id"] = input("ID: ")
+    row["dob"] = input("Birth Date (YYYY-MM-DD): ")
+    row["sex"] = input("Sex (Male/Female/Others): ")
+    row["jd"] = input("Join Date (YYYY-MM-DD): ")
+    row["wh"] = input("Working Hours (Day1-Day2 Time1-Time2): ")
+    row["position"] = input("Position (Manager/Maintainer/Operator): ")
+    row["wa"] = int(input("Attraction: "))
+    row["salary"] = input("Salary: ")
+    row["do"] = input("Door number: ")
+    row["street"] = input("Street: ")
+    row["pin"] = input("Pincode: ")
+
+    n = int(input("Enter the number of Phone numbers you want to insert: "))
+    for i in range(n):
+        row_phno.append(input("Enter Phone number: "))
+        print(row_phno[i], i)
+    try:
+        query = "INSERT INTO STAFF(id,fname,lname,sex,date_of_birth,join_date,working_hours,position,salary,door_no,street,pincode,attraction_id) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" % (
+            row["id"], row["fname"], row["lname"], row["sex"], row["dob"], row["jd"], row[
+                "wh"], row["position"], row["salary"], row["do"], row["street"], row["pin"], row["wa"]
+        )
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert into database")
+        print(">>>>>>>>>>>>>", e)
+        return
+    for i in range(n):
+        try:
+            query = "INSERT INTO STAFF_PHONENUMBERS(staff_id,phone_number) VALUES ('%s','%s')" % (
+                row["id"], row_phno[i]
+            )
+            print(query)
+            cur.execute(query)
+            con.commit()
+        except Exception as e:
+            con.rollback()
+            print("Failed to insert into database")
+            print(">>>>>>>>>>>>>", e)
+            return
+    return
+
+
 def insert():
     print("\nAvailable Options in Insert\n")
     print("1.   Visitor")
@@ -224,37 +313,11 @@ def insert():
     print("\n")
     ch = input("Enter: ")
     if ch == '1':
-        row = {}
-        print("Enter visitor details: ")
-        name = (input("Name (Fname Lname): ")).split(' ')
-        row["fname"] = name[0]
-        row["lname"] = name[1]
-        row["ssn"] = input("SSN: ")
-        row["dob"] = input("Birth Date (YYYY-MM-DD): ")
-        row["sex"] = input("Sex (Male/Female|Others): ")
-        query = "INSERT INTO VISITOR(ssn,date_of_birth,fname,lname,sex) VALUES ('%s','%s','%s','%s','%s')" % (
-            row["ssn"], row["dob"], row["fname"], row["lname"], row["sex"])
+        insertvisitor()
+        return
     elif ch == '2':
-        row = {}
-        print("Enter staff details: ")
-        name = (input("Name (Fname Lname): ")).split(' ')
-        row["fname"] = name[0]
-        row["lname"] = name[1]
-        row["id"] = input("ID: ")
-        row["dob"] = input("Birth Date (YYYY-MM-DD): ")
-        row["sex"] = input("Sex (Male/Female|Others): ")
-        row["jd"] = input("Join Date (YYYY-MM-DD): ")
-        row["wh"] = input("Working Hours (Day1-Day2 Time1-Time2): ")
-        row["position"] = input("Position (Manager/Maintainer/Operator): ")
-        row["wa"] = int(input("Attraction: "))
-        row["salary"] = input("Salary: ")
-        row["do"] = input("Door number: ")
-        row["street"] = input("Street: ")
-        row["pin"] = input("Pincode: ")
-        query = "INSERT INTO STAFF(id,fname,lname,sex,date_of_birth,join_date,working_hours,position,salary,door_no,street,pincode,attraction_id) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" % (
-            row["id"], row["fname"], row["lname"], row["sex"], row["dob"], row["jd"], row[
-                "wh"], row["position"], row["salary"], row["do"], row["street"], row["pin"], row["wa"]
-        )
+        insertstaff()
+        return
     elif ch == '3':
         row = {}
         print("Enter attraction details: ")
@@ -433,20 +496,15 @@ def check(ch):
 
 while(1):
     tmp = sp.call('clear', shell=True)
-    # username = input("Username: ")
-    # password = input("Password: ")
-
-    username = 'root'
-    password = 'sql'
+    username = input("Username: ")
+    password = input("Password: ")
 
     try:
         con = pymysql.connect(host='127.0.0.1',
                               user=username,
                               password=password,
-                              db='theme_park2',
-                              # db='project',
+                              db='theme_parkdb',
                               cursorclass=pymysql.cursors.DictCursor,
-                              client_flag=CLIENT.MULTI_STATEMENTS,
                               port=5005
                               )
         tmp = sp.call('clear', shell=True)
